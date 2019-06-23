@@ -446,6 +446,16 @@
               <FileType>1</FileType>
               <FilePath>..\USER\tileSystem.c</FilePath>
             </File>
+            <File>
+              <FileName>display.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\display.c</FilePath>
+            </File>
+            <File>
+              <FileName>meshRenderer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\meshRenderer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

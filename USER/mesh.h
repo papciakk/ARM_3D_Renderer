@@ -1,3 +1,6 @@
+#ifndef MESH_H
+#define MESH_H
+
 #include "definitions.h"
 
 const uint16_t num_vertices = 1742;
@@ -1286,3 +1289,5 @@ const triangle_index_t indices[] = {
 	IDX(1741,1737,1736), IDX(1741,1738,1737), IDX(1741,1739,1738), IDX(1741,1740,1739), IDX(1741,1681,1740)
 	
 };
+
+#endif // MESH_H
