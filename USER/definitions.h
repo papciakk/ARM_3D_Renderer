@@ -66,7 +66,6 @@ typedef struct {
 	.y1 = FULLSCREEN_RES_Y - 1 \
 }
 
-#define COLOR_BLACK {0}
-#define COLOR_WHITE {255}
+#define RGB565(c) (uint16_t)((((c)->r >> 3) << 11) | (((c)->g >> 2) << 5) | ((c)->b >> 3))
 
 #endif // DEFINITIONS_H

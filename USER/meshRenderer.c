@@ -1,4 +1,5 @@
 #include "meshRenderer.h"
+#include "lighting.h"
 #include "mesh.h"
 
 extern const uint16_t TILES_CNT;
@@ -9,7 +10,10 @@ const uint16_t HALF_FULLSCREEN_RES_X = FULLSCREEN_RES_X / 2;
 const uint16_t HALF_FULLSCREEN_RES_Y = FULLSCREEN_RES_Y / 2;
 
 __inline void rescale_attributes(vertex_attr_t *rescaled_va, const vertex_attr_t *va);
-__inline void cleanUp(vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3, triangle2d_t *triangle);
+__inline void cleanUp(
+	vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3, 
+	triangle2d_t *triangle,
+	color_t *color1, color_t *color2, color_t *color3);
 __inline void prepareTriangleVertices(uint16_t triangleId, vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3);
 
 void initMeshRenderer(void) {
@@ -26,11 +30,18 @@ __inline void rescale_attributes(vertex_attr_t *rescaled_va, const vertex_attr_t
 	rescaled_va->normal.z = va->normal.z;
 }
 
-__inline void cleanUp(vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3, triangle2d_t *triangle) {
+__inline void cleanUp(
+	vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3,
+	triangle2d_t *triangle,
+	color_t *color1, color_t *color2, color_t *color3) {
+		
 	free(v1);
 	free(v2);
 	free(v3);
 	free(triangle);
+	free(color1);
+	free(color2);
+	free(color3);
 }
 
 __inline void prepareTriangleVertices(uint16_t triangleId, vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3) {
@@ -55,11 +66,15 @@ void renderMesh(void)
 	
 	triangle2d_t *triangle;
 	vertex_attr_t *v1, *v2, *v3;
+	color_t *color1, *color2, *color3;
 	
 	triangle = (triangle2d_t *)malloc(sizeof(triangle2d_t));
 	v1 = (vertex_attr_t *)malloc(sizeof(vertex_attr_t));
 	v2 = (vertex_attr_t *)malloc(sizeof(vertex_attr_t));
 	v3 = (vertex_attr_t *)malloc(sizeof(vertex_attr_t));
+	color1 = (color_t *)malloc(sizeof(color_t));
+	color2 = (color_t *)malloc(sizeof(color_t));
+	color3 = (color_t *)malloc(sizeof(color_t));
 	
 	for(tileId = 0; tileId < TILES_CNT; tileId++) {
 		currentRect = &tileRects[tileId];
@@ -69,11 +84,13 @@ void renderMesh(void)
 		for(triangleId = 0; triangleId < num_indices; triangleId++) {
 			prepareTriangleVertices(triangleId, v1, v2, v3);
 			prepareTriangle(v1, v2, v3, triangle);
-			renderTriangle(frameBuffer, triangle, currentRect);
+			calcLightingForTriangle(v1, v2, v3, color1, color2, color3);
+			renderTriangle(frameBuffer, triangle, currentRect,
+				color1, color2, color3);
 		}
 		
 		displayFrameBuffer(currentRect);
 	}
 	
-	cleanUp(v1, v2, v3, triangle);
+	cleanUp(v1, v2, v3, triangle, color1, color2, color3);
 }

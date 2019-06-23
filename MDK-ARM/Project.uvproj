@@ -456,6 +456,11 @@
               <FileType>1</FileType>
               <FilePath>..\USER\meshRenderer.c</FilePath>
             </File>
+            <File>
+              <FileName>lighting.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\lighting.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

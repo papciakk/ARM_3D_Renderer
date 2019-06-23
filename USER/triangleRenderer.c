@@ -39,10 +39,13 @@ __inline int32_t crossProduct(int16_t x, int16_t y, point2d_t *p2, point2d_t *p3
 	return ((x - p3->x) * (p2->y - p3->y) - (p2->x - p3->x) * (y - p3->y));
 }
 
-void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileRect) {
+void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileRect,
+	color_t *color1, color_t *color2, color_t *color3) {
+		
 	int32_t e0, e1, e2;
 	srect_t *renderRect;
 	int16_t x, y;
+	uint16_t frameBufferAddr;
 	
 	renderRect = getCurrentRenderingBoundingBox(triangle, tileRect);
 	
@@ -53,7 +56,8 @@ void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileR
 			e2 = crossProduct(x, y, &triangle->a[2], &triangle->a[0]);
 			
 			if(e0 <= 0 && e1 <= 0 && e2 <= 0) {
-				frameBuffer[TILE_RES_X * (y - tileRect->y0) + (x - tileRect->x0)] = White;
+				frameBufferAddr = TILE_RES_X * (y - tileRect->y0) + (x - tileRect->x0);
+				frameBuffer[frameBufferAddr] = RGB565(color1);
 			}
 		}
 	}
