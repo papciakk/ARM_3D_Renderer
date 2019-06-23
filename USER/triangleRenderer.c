@@ -26,10 +26,13 @@ __inline srect_t *getTriangleAndTileIntersectedBoundingBox(srect_t *triangleBB, 
 }
 
 __inline srect_t *getCurrentRenderingBoundingBox(triangle2d_t *triangle, rect_t *tileRect) {
-	return getTriangleAndTileIntersectedBoundingBox(
-		getTriangleBoundingBox(triangle),
+	srect_t *triangleBB = getTriangleBoundingBox(triangle);
+	srect_t *r = getTriangleAndTileIntersectedBoundingBox(
+		triangleBB,
 		tileRect
 	);
+	free(triangleBB);
+	return r;
 }
 
 __inline int32_t crossProduct(int16_t x, int16_t y, point2d_t *p2, point2d_t *p3) {
@@ -54,4 +57,6 @@ void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileR
 			}
 		}
 	}
+	
+	free(renderRect);
 }

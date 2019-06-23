@@ -28,7 +28,7 @@
 
 #include "tileSystem.h"
 #include "triangleRenderer.h"
-//#include "mesh.h"
+#include "mesh.h"
 
 uint16_t frameBuffer[TILE_RES_X * TILE_RES_Y];
 
@@ -49,11 +49,29 @@ void displayFrameBuffer(rect_t *tileRect) {
 	}
 }
 
+const uint16_t HALF_FULLSCREEN_RES_X = FULLSCREEN_RES_X / 2;
+const uint16_t HALF_FULLSCREEN_RES_Y = FULLSCREEN_RES_Y / 2;
+
+vertex_attr_t *rescale_attributes(const vertex_attr_t *va) {
+	vertex_attr_t *_va = (vertex_attr_t *)malloc(sizeof(vertex_attr_t));
+	
+	_va->pos.x = (va->pos.x >> 7) + HALF_FULLSCREEN_RES_X;
+	_va->pos.y = va->pos.y >> 7;
+	_va->pos.z = (va->pos.z >> 7) + HALF_FULLSCREEN_RES_Y;
+	
+	_va->normal.x = va->normal.x;
+	_va->normal.y = va->normal.y;
+	_va->normal.z = va->normal.z;
+	
+	return _va;
+}
+
 int main(void)
 {
-	int i;
+	uint16_t tile_id, triangle_id;
 	triangle2d_t *triangle;
 	rect_t *currentRect;
+	vertex_attr_t *v1, *v2, *v3;
 	
   delay_init();
   LCD_Initializtion();
@@ -62,21 +80,35 @@ int main(void)
 	initTileSystem();
 	
 	triangle = (triangle2d_t *)malloc(sizeof(triangle2d_t));
-	triangle->a[0].x = 26;
-	triangle->a[0].y = 19;
-	triangle->a[1].x = 114;
-	triangle->a[1].y = 214;
-	triangle->a[2].x = 294;
-	triangle->a[2].y = 129;
 	
   while (1)
   {
-		for(i = 0; i < TILES_CNT; i++) {
+		for(tile_id = 0; tile_id < TILES_CNT; tile_id++) {
 			
-			currentRect = &tileRects[i];
+			currentRect = &tileRects[tile_id];
 			
 			clearFrameBuffer();
-			renderTriangle(frameBuffer, triangle, currentRect);
+			
+			for(triangle_id = 0; triangle_id < num_indices; triangle_id++) {
+				v1 = rescale_attributes(&vertices[indices[triangle_id].a]);
+				v2 = rescale_attributes(&vertices[indices[triangle_id].b]);
+				v3 = rescale_attributes(&vertices[indices[triangle_id].c]);
+				
+				triangle->a[0].x = v1->pos.x;
+				triangle->a[0].y = v1->pos.z;
+				triangle->a[1].x = v2->pos.x;
+				triangle->a[1].y = v2->pos.z;
+				triangle->a[2].x = v3->pos.x;
+				triangle->a[2].y = v3->pos.z;
+				
+				renderTriangle(frameBuffer, triangle, currentRect);
+				
+				free(v1);
+				free(v2);
+				free(v3);
+			}
+			
+			
 			displayFrameBuffer(currentRect);
 		}
   }

@@ -59,14 +59,6 @@ typedef struct {
 #define VA(px,py,pz,nx,ny,nz) {{(px), (py), (pz)}, {(nx), (ny), (nz)}}
 #define IDX(a,b,c) {(a), (b), (c)}
 
-
-// CONSTANTS
-
-#define BITS_PER_PIXEL 16
-
-#define FULLSCREEN_RES_X 320
-#define FULLSCREEN_RES_Y 240
-
 #define FULLSCREEN_RECT { \
 	.x0 = 0,  \
 	.x1 = FULLSCREEN_RES_X - 1, \
