@@ -437,14 +437,14 @@
               <FilePath>..\USER\stm32f10x_conf.h</FilePath>
             </File>
             <File>
-              <FileName>common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\common.c</FilePath>
-            </File>
-            <File>
               <FileName>triangleRenderer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\USER\triangleRenderer.c</FilePath>
+            </File>
+            <File>
+              <FileName>tileSystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\tileSystem.c</FilePath>
             </File>
           </Files>
         </Group>

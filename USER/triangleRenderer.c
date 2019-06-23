@@ -1,38 +1,38 @@
 #include "triangleRenderer.h"
 
-srect_t *getTriangleBoundingBox(triangle2d_t *triangle);
-srect_t *getTriangleAndTileIntersectedBoundingBox(srect_t *triangleBB, rect_t *tileBB);
-srect_t *getCurrentRenderingBoundingBox(triangle2d_t *triangle, rect_t *tileRect);
+__inline srect_t *getTriangleBoundingBox(triangle2d_t *triangle);
+__inline srect_t *getTriangleAndTileIntersectedBoundingBox(srect_t *triangleBB, rect_t *tileBB);
+__inline srect_t *getCurrentRenderingBoundingBox(triangle2d_t *triangle, rect_t *tileRect);
 
-int32_t crossProduct(int16_t x, int16_t y, point2d_t *p2, point2d_t *p3);
+__inline int32_t crossProduct(int16_t x, int16_t y, point2d_t *p2, point2d_t *p3);
 
 
-srect_t *getTriangleBoundingBox(triangle2d_t *triangle) {
+__inline srect_t *getTriangleBoundingBox(triangle2d_t *triangle) {
 	srect_t *r = (srect_t *)malloc(sizeof(srect_t));
-	r->x0 = minimum3(triangle->a[0].x, triangle->a[1].x, triangle->a[2].x);
-	r->y0 = minimum3(triangle->a[0].y, triangle->a[1].y, triangle->a[2].y);
-	r->x1 = maximum3(triangle->a[0].x, triangle->a[1].x, triangle->a[2].x);
-	r->y1 = maximum3(triangle->a[0].y, triangle->a[1].y, triangle->a[2].y);
+	r->x0 = MIN3(triangle->a[0].x,triangle->a[1].x,triangle->a[2].x);
+	r->y0 = MIN3(triangle->a[0].y,triangle->a[1].y,triangle->a[2].y);
+	r->x1 = MAX3(triangle->a[0].x,triangle->a[1].x,triangle->a[2].x);
+	r->y1 = MAX3(triangle->a[0].y,triangle->a[1].y,triangle->a[2].y);
 	return r;
 }
 
-srect_t *getTriangleAndTileIntersectedBoundingBox(srect_t *triangleBB, rect_t *tileBB) {
+__inline srect_t *getTriangleAndTileIntersectedBoundingBox(srect_t *triangleBB, rect_t *tileBB) {
 	srect_t *r = (srect_t *)malloc(sizeof(srect_t));
-	r->x0 = maximum2(triangleBB->x0, tileBB->x0);
-	r->y0 = maximum2(triangleBB->y0, tileBB->y0);
-	r->x1 = minimum2(triangleBB->x1, tileBB->x1);
-	r->y1 = minimum2(triangleBB->y1, tileBB->y1);
+	r->x0 = MAX2(triangleBB->x0,tileBB->x0);
+	r->y0 = MAX2(triangleBB->y0,tileBB->y0);
+	r->x1 = MIN2(triangleBB->x1,tileBB->x1);
+	r->y1 = MIN2(triangleBB->y1,tileBB->y1);
 	return r;
 }
 
-srect_t *getCurrentRenderingBoundingBox(triangle2d_t *triangle, rect_t *tileRect) {
+__inline srect_t *getCurrentRenderingBoundingBox(triangle2d_t *triangle, rect_t *tileRect) {
 	return getTriangleAndTileIntersectedBoundingBox(
 		getTriangleBoundingBox(triangle),
 		tileRect
 	);
 }
 
-int32_t crossProduct(int16_t x, int16_t y, point2d_t *p2, point2d_t *p3) {
+__inline int32_t crossProduct(int16_t x, int16_t y, point2d_t *p2, point2d_t *p3) {
 	return ((x - p3->x) * (p2->y - p3->y) - (p2->x - p3->x) * (y - p3->y));
 }
 

@@ -1,12 +1,10 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include "definitions.h"
+#define MIN3(x,y,z) ((x) < (y)) ? (((x) < (z)) ? (x) : (z)) : (((y) < (z)) ? (y) : (z))
+#define MAX3(x,y,z) ((x) > (y)) ? (((x) > (z)) ? (x) : (z)) : (((y) > (z)) ? (y) : (z))
 
-int16_t minimum3(int16_t x, int16_t y, int16_t z);
-int16_t maximum3(int16_t x, int16_t y, int16_t z);
-
-int16_t minimum2(int16_t x, int16_t y);
-int16_t maximum2(int16_t x, int16_t y);
+#define MIN2(x,y) (((x) < (y)) ? (x) : (y))
+#define MAX2(x,y) (((x) > (y)) ? (x) : (y))
 
 #endif // COMMON_H

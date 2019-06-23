@@ -32,15 +32,6 @@ typedef struct {
 } point3d_32_t;
 
 typedef struct {
-	point3d_t pos;
-	point3d_t normal;
-} vertex_attr_t;
-
-typedef struct {
-	vertex_attr_t a[3];
-} triangle_t;
-
-typedef struct {
 	point2d_t a[3];
 } triangle2d_t;
 
@@ -53,12 +44,25 @@ typedef struct {
 } triangle_colors_t;
 
 typedef struct {
+	point3d_t pos;
+	point3d_t normal;
+} vertex_attr_t;
+
+typedef struct {
 	uint16_t a, b, c;
-} triangle_indices_t;
+} triangle_index_t;
+
+typedef struct {
+	vertex_attr_t a[3];
+} triangle_t;
+
+#define VA(px,py,pz,nx,ny,nz) {{(px), (py), (pz)}, {(nx), (ny), (nz)}}
+#define IDX(a,b,c) {(a), (b), (c)}
+
 
 // CONSTANTS
 
-#define BITS_PER_PIXEL 24
+#define BITS_PER_PIXEL 16
 
 #define FULLSCREEN_RES_X 320
 #define FULLSCREEN_RES_Y 240
