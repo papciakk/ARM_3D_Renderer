@@ -56,21 +56,24 @@ void renderMesh(void)
 	vertex_attr_t v1, v2, v3;
 	color_t color1, color2, color3;
 	int32_t area;
+	point3d_t depths;
 	
 	for(tileId = 0; tileId < TILES_CNT; tileId++) {
 		currentRect = &tileRects[tileId];
 		
 		clearFrameBuffer();
+		clearDepthBuffer();
 		
 		for(triangleId = 0; triangleId < num_indices; triangleId++) {
 			prepareTriangleVertices(triangleId, &v1, &v2, &v3);
 			prepareTriangle(&v1, &v2, &v3, &triangle);
 			calcLightingForTriangle(&v1, &v2, &v3, &color1, &color2, &color3);
+			depths.x = v1.pos.y; depths.y = v2.pos.y; depths.z = v3.pos.y;
 			area = getTriangleArea(&v1, &v2, &v3);
 			renderTriangle(
 				frameBuffer, &triangle, currentRect,
 				&color1, &color2, &color3,
-				area);
+				area, &depths);
 		}
 		
 		displayFrameBuffer(currentRect);

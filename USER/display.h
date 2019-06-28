@@ -5,4 +5,5 @@
 
 void initDisplay(void);
 void clearFrameBuffer(void);
+void clearDepthBuffer(void);
 void displayFrameBuffer(rect_t *tileRect);

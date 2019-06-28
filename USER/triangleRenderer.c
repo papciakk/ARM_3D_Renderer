@@ -1,10 +1,19 @@
 #include "triangleRenderer.h"
 
+extern uint16_t depthBuffer[];
+
 __inline srect_t *getTriangleBoundingBox(triangle2d_t *triangle);
 __inline srect_t *getTriangleAndTileIntersectedBoundingBox(srect_t *triangleBB, rect_t *tileBB);
 __inline srect_t *getCurrentRenderingBoundingBox(triangle2d_t *triangle, rect_t *tileRect);
-
 __inline int32_t crossProduct(int16_t x, int16_t y, point2d_t *p2, point2d_t *p3);
+__inline uint8_t interpolateColorComponent(
+	uint8_t c0, uint8_t c1, uint8_t c2,
+	int32_t e0, int32_t e1, int32_t e2,
+	int32_t area);
+__inline int32_t interpolateDepth(
+	point3d_t *depths, 
+	int32_t e0, int32_t e1, int32_t e2, 
+	int32_t area);
 
 
 __inline srect_t *getTriangleBoundingBox(triangle2d_t *triangle) {
@@ -46,16 +55,25 @@ __inline uint8_t interpolateColorComponent(
 		
 	return (int32_t)(e0 * c0 + e1 * c1 + e2 * c2) / area;
 }
+	
+__inline int32_t interpolateDepth(
+	point3d_t *depths, 
+	int32_t e0, int32_t e1, int32_t e2, 
+	int32_t area) {
+	
+	return 256 - (int32_t)(e0 * depths->z + e1 * depths->x + e2 * depths->y) / area;
+}
 
 void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileRect,
 	color_t *color1, color_t *color2, color_t *color3,
-	int32_t area) {
+	int32_t area, point3d_t *depths) {
 		
 	int32_t e0, e1, e2;
 	srect_t *renderRect;
 	int16_t x, y;
-	uint16_t frameBufferAddr;
+	uint16_t bufferAddr;
 	uint8_t r, g, b;
+	int32_t depth;
 	
 	renderRect = getCurrentRenderingBoundingBox(triangle, tileRect);
 	
@@ -69,9 +87,13 @@ void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileR
 				r = interpolateColorComponent(color3->r, color1->r, color2->r, e0, e1, e2, area);
 				g = interpolateColorComponent(color3->g, color1->g, color2->g, e0, e1, e2, area);
 				b = interpolateColorComponent(color3->b, color1->b, color2->b, e0, e1, e2, area);
+				depth = interpolateDepth(depths, e0, e1, e2, area);
 				
-				frameBufferAddr = TILE_RES_X * (y - tileRect->y0) + (x - tileRect->x0);
-				frameBuffer[frameBufferAddr] = RGB565(r,g,b);
+				bufferAddr = TILE_RES_X * (y - tileRect->y0) + (x - tileRect->x0);
+				if(depth + 127 > depthBuffer[bufferAddr]) {
+					depthBuffer[bufferAddr] = depth + 127;
+					frameBuffer[bufferAddr] = RGB565(r,g,b);
+				}
 			}
 		}
 	}
