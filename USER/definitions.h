@@ -24,6 +24,10 @@ typedef struct {
 } point2d_t;
 
 typedef struct {
+	int32_t x, y;
+} point2d_32_t;
+
+typedef struct {
 	int16_t x, y, z;
 } point3d_t;
 
@@ -36,8 +40,16 @@ typedef struct {
 } triangle2d_t;
 
 typedef struct {
+	point2d_32_t a[3];
+} triangle2d_32_t;
+
+typedef struct {
 	point3d_t a[3];
 } triangle3d_t;
+
+typedef struct {
+	point3d_32_t a[3];
+} triangle3d_32_t;
 
 typedef struct {
 	color_t a[3];
@@ -47,6 +59,11 @@ typedef struct {
 	point3d_t pos;
 	point3d_t normal;
 } vertex_attr_t;
+
+typedef struct {
+	point3d_32_t pos;
+	point3d_t normal;
+} vertex_attr_32_t;
 
 typedef struct {
 	uint16_t a, b, c;

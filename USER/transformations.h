@@ -3,6 +3,6 @@
 
 #include "definitions.h"
 
-void transform(vertex_attr_t *vaIn, vertex_attr_t *vaOut);
+void transform(vertex_attr_t *vaIn, vertex_attr_32_t *vaOut);
 
 #endif // TRANSFORMATIONS_H

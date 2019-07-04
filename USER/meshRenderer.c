@@ -10,18 +10,21 @@ extern uint16_t frameBuffer[];
 const uint16_t HALF_FULLSCREEN_RES_X = FULLSCREEN_RES_X / 2;
 const uint16_t HALF_FULLSCREEN_RES_Y = FULLSCREEN_RES_Y / 2;
 
-__inline void rescaleAttributes(vertex_attr_t *rescaled_va, vertex_attr_t *va);
+__inline void rescaleAttributes(vertex_attr_t *rescaled_va, vertex_attr_32_t *va);
 __inline void rescaleAllAttributes(
-	vertex_attr_t *v1In, vertex_attr_t *v2In, vertex_attr_t *v3In,
+	vertex_attr_32_t *v1In, vertex_attr_32_t *v2In, vertex_attr_32_t *v3In,
 	vertex_attr_t *v1Out, vertex_attr_t *v2Out, vertex_attr_t *v3Out);
 __inline void prepareTriangleVertices(uint16_t triangleId, vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3);
+__inline void prepareTriangle(
+	vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3,
+	triangle2d_t *triangle);
 __inline int32_t getTriangleArea(vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3);
 
 void initMeshRenderer(void) {
 	initTileSystem();
 }
 
-__inline void rescaleAttributes(vertex_attr_t *rescaled_va, vertex_attr_t *va) {	
+__inline void rescaleAttributes(vertex_attr_t *rescaled_va, vertex_attr_32_t *va) {	
 	rescaled_va->pos.x = (va->pos.x >> 7) + HALF_FULLSCREEN_RES_X;
 	rescaled_va->pos.y = va->pos.y >> 7;
 	rescaled_va->pos.z = (va->pos.z >> 7) + HALF_FULLSCREEN_RES_Y;
@@ -38,7 +41,7 @@ __inline void prepareTriangleVertices(uint16_t triangleId, vertex_attr_t *v1, ve
 }
 
 __inline void rescaleAllAttributes(
-	vertex_attr_t *v1In, vertex_attr_t *v2In, vertex_attr_t *v3In,
+	vertex_attr_32_t *v1In, vertex_attr_32_t *v2In, vertex_attr_32_t *v3In,
 	vertex_attr_t *v1Out, vertex_attr_t *v2Out, vertex_attr_t *v3Out) {
 		
 	rescaleAttributes(v1Out, v1In);
@@ -46,7 +49,10 @@ __inline void rescaleAllAttributes(
 	rescaleAttributes(v3Out, v3In);
 }
 
-__inline void prepareTriangle(vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3, triangle2d_t *triangle) {
+__inline void prepareTriangle(
+	vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3,
+	triangle2d_t *triangle) {
+		
 	triangle->a[0].x = v1->pos.x;
 	triangle->a[0].y = v1->pos.z;
 	triangle->a[1].x = v2->pos.x;
@@ -67,7 +73,7 @@ void renderMesh(void)
 	
 	triangle2d_t triangle;
 	vertex_attr_t v1_raw, v2_raw, v3_raw;
-	vertex_attr_t v1_t, v2_t, v3_t;
+	vertex_attr_32_t v1_t, v2_t, v3_t;
 	vertex_attr_t v1, v2, v3;
 	color_t color1, color2, color3;
 	int32_t area;
