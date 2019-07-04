@@ -1,6 +1,7 @@
 #include "meshRenderer.h"
 #include "lighting.h"
 #include "mesh.h"
+#include "transformations.h"
 
 extern const uint16_t TILES_CNT;
 extern rect_t tileRects[];
@@ -9,7 +10,10 @@ extern uint16_t frameBuffer[];
 const uint16_t HALF_FULLSCREEN_RES_X = FULLSCREEN_RES_X / 2;
 const uint16_t HALF_FULLSCREEN_RES_Y = FULLSCREEN_RES_Y / 2;
 
-__inline void rescale_attributes(vertex_attr_t *rescaled_va, const vertex_attr_t *va);
+__inline void rescaleAttributes(vertex_attr_t *rescaled_va, vertex_attr_t *va);
+__inline void rescaleAllAttributes(
+	vertex_attr_t *v1In, vertex_attr_t *v2In, vertex_attr_t *v3In,
+	vertex_attr_t *v1Out, vertex_attr_t *v2Out, vertex_attr_t *v3Out);
 __inline void prepareTriangleVertices(uint16_t triangleId, vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3);
 __inline int32_t getTriangleArea(vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3);
 
@@ -17,7 +21,7 @@ void initMeshRenderer(void) {
 	initTileSystem();
 }
 
-__inline void rescale_attributes(vertex_attr_t *rescaled_va, const vertex_attr_t *va) {	
+__inline void rescaleAttributes(vertex_attr_t *rescaled_va, vertex_attr_t *va) {	
 	rescaled_va->pos.x = (va->pos.x >> 7) + HALF_FULLSCREEN_RES_X;
 	rescaled_va->pos.y = va->pos.y >> 7;
 	rescaled_va->pos.z = (va->pos.z >> 7) + HALF_FULLSCREEN_RES_Y;
@@ -28,9 +32,18 @@ __inline void rescale_attributes(vertex_attr_t *rescaled_va, const vertex_attr_t
 }
 
 __inline void prepareTriangleVertices(uint16_t triangleId, vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3) {
-	rescale_attributes(v1, &vertices[indices[triangleId].a]);
-	rescale_attributes(v2, &vertices[indices[triangleId].b]);
-	rescale_attributes(v3, &vertices[indices[triangleId].c]);
+	*v1 = vertices[indices[triangleId].a];
+	*v2 = vertices[indices[triangleId].b];
+	*v3 = vertices[indices[triangleId].c];
+}
+
+__inline void rescaleAllAttributes(
+	vertex_attr_t *v1In, vertex_attr_t *v2In, vertex_attr_t *v3In,
+	vertex_attr_t *v1Out, vertex_attr_t *v2Out, vertex_attr_t *v3Out) {
+		
+	rescaleAttributes(v1Out, v1In);
+	rescaleAttributes(v2Out, v2In);
+	rescaleAttributes(v3Out, v3In);
 }
 
 __inline void prepareTriangle(vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3, triangle2d_t *triangle) {
@@ -53,6 +66,8 @@ void renderMesh(void)
 	rect_t *currentRect;
 	
 	triangle2d_t triangle;
+	vertex_attr_t v1_raw, v2_raw, v3_raw;
+	vertex_attr_t v1_t, v2_t, v3_t;
 	vertex_attr_t v1, v2, v3;
 	color_t color1, color2, color3;
 	int32_t area;
@@ -65,15 +80,23 @@ void renderMesh(void)
 		clearDepthBuffer();
 		
 		for(triangleId = 0; triangleId < num_indices; triangleId++) {
-			prepareTriangleVertices(triangleId, &v1, &v2, &v3);
+			prepareTriangleVertices(triangleId, &v1_raw, &v2_raw, &v3_raw);
+			transform(&v1_raw, &v1_t);
+			transform(&v2_raw, &v2_t);
+			transform(&v3_raw, &v3_t);
+			rescaleAllAttributes(&v1_t, &v2_t, &v3_t, &v1, &v2, &v3);
 			prepareTriangle(&v1, &v2, &v3, &triangle);
+			
 			calcLightingForTriangle(&v1, &v2, &v3, &color1, &color2, &color3);
+			
 			depths.x = v1.pos.y; depths.y = v2.pos.y; depths.z = v3.pos.y;
 			area = getTriangleArea(&v1, &v2, &v3);
+			
 			renderTriangle(
 				frameBuffer, &triangle, currentRect,
 				&color1, &color2, &color3,
-				area, &depths);
+				area, &depths
+			);
 		}
 		
 		displayFrameBuffer(currentRect);
