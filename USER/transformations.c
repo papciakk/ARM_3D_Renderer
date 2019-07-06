@@ -1,34 +1,37 @@
 #include "transformations.h"
 
-uint16_t rotX = 0, rotY = 0, rotZ = 0;
-uint16_t scale = 1;
+int16_t rotX = 0, rotY = 0, rotZ = 0;
+int16_t scale = 1;
 
-__inline void transformScale(vertex_attr_t *vaIn, vertex_attr_32_t *vaOut,
-	uint16_t scale
-);
+__inline point3d_32_t transformScale(point3d_t pIn, int16_t scale);
+__inline point3d_t transformRot(point3d_t pIn, int16_t rotX, int16_t rotY, int16_t rotZ);
 
-__inline void transformRot(vertex_attr_t *vaIn, vertex_attr_32_t *vaOut,
-	uint16_t rotX, uint16_t rotY, uint16_t rotZ
-);
-
-__inline void transformScale(vertex_attr_t *vaIn, vertex_attr_32_t *vaOut,
-	uint16_t scale
-) {
+__inline point3d_32_t transformScale(point3d_t pIn, int16_t scale) {
+	point3d_32_t pOut;
 	
-	vaOut->pos.x = vaIn->pos.x + ((vaIn->pos.x * scale) >> 4);
-	vaOut->pos.y = vaIn->pos.y + ((vaIn->pos.y * scale) >> 4);
-	vaOut->pos.z = vaIn->pos.z + ((vaIn->pos.z * scale) >> 4);	
+	pOut.x = pIn.x + ((pIn.x * scale) >> 3);
+	pOut.y = pIn.y + ((pIn.y * scale) >> 3);
+	pOut.z = pIn.z + ((pIn.z * scale) >> 3);
+	
+	return pOut;
 }
 
-__inline void transformRot(vertex_attr_t *vaIn, vertex_attr_32_t *vaOut,
-	uint16_t rotX, uint16_t rotY, uint16_t rotZ
-) {
-	// TODO
-	vaOut->pos.x = vaIn->pos.x; vaOut->pos.y = vaIn->pos.y; vaOut->pos.z = vaIn->pos.z;	
+__inline point3d_t transformRot(point3d_t pIn, int16_t rotX, int16_t rotY, int16_t rotZ) {
+	
+	return pIn;
 }
 
 void transform(vertex_attr_t *vaIn, vertex_attr_32_t *vaOut) {
-	vaOut->normal.x = vaIn->normal.x; vaOut->normal.y = vaIn->normal.y; vaOut->normal.z = vaIn->normal.z;
-	transformRot(vaIn, vaOut, rotX, rotY, rotZ);
-	transformScale(vaIn, vaOut, scale);
+	point3d_t p;
+	point3d_32_t p32;
+	
+	p = transformRot(vaIn->pos, rotX, rotY, rotZ);
+	p32 = transformScale(p, scale);
+	
+	vaOut->pos.x = p32.x;
+	vaOut->pos.y = p32.y;
+	vaOut->pos.z = p32.z;
+	vaOut->normal.x = vaIn->normal.x; 
+	vaOut->normal.y = vaIn->normal.y; 
+	vaOut->normal.z = vaIn->normal.z;
 }

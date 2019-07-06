@@ -26,76 +26,18 @@
 #include "meshRenderer.h"
 #include "display.h"
 #include "sinCos.h"
-
-#define RCC_BTN_USER RCC_APB2Periph_GPIOA
-#define PIN_BTN_USER GPIO_Pin_8
-#define PORT_BTN_USER GPIOA
-
-#define RCC_JOY RCC_APB2Periph_GPIOD
-#define PIN_JOY_SEL GPIO_Pin_0
-#define PIN_JOY_DOWN GPIO_Pin_1
-#define PIN_JOY_LEFT GPIO_Pin_2
-#define PIN_JOY_RIGHT GPIO_Pin_3
-#define PIN_JOY_UP GPIO_Pin_4
-#define PORT_JOY GPIOD
-
-#define IS_BTN_USER_PRESSED() \
-	(GPIO_ReadInputData(PORT_BTN_USER) & PIN_BTN_USER)
-	
-#define IS_JOY_UP() \
-	(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_UP)
-	
-#define IS_JOY_DOWN() \
-	(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_DOWN)
-	
-#define IS_JOY_LEFT() \
-	(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_LEFT)
-	
-#define IS_JOY_RIGHT() \
-	(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_RIGHT)
-
-#define IS_JOY_SEL() \
-	(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_SEL)
-
-extern uint16_t rotX, rotY, rotZ;
-extern uint16_t scale;
-
-void initButtons(void) {
-	GPIO_InitTypeDef GPIO_InitStruct;
-	
-	RCC_APB2PeriphClockCmd(RCC_BTN_USER, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_JOY, ENABLE);
- 
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;
-	
-	GPIO_InitStruct.GPIO_Pin = PIN_BTN_USER;
-	GPIO_Init(PORT_BTN_USER, &GPIO_InitStruct);
-		
-	GPIO_InitStruct.GPIO_Pin = 
-		PIN_JOY_UP | PIN_JOY_DOWN | 
-		PIN_JOY_LEFT | PIN_JOY_RIGHT | 
-		PIN_JOY_SEL;
-	GPIO_Init(PORT_JOY, &GPIO_InitStruct);
-}
+#include "input.h"
 
 int main(void)
 {		
-	initButtons();
+	initInputs();
 	initDisplay();
 	initSinCos();
 	initMeshRenderer();
 	
   while (1)
   {
-		if(IS_BTN_USER_PRESSED()) {
-			scale -= 1;
-		}
-		
-		if(IS_JOY_SEL()) {
-			scale += 1;
-		}
-		
+		handleInputs();		
 		renderMesh();
   }
 }

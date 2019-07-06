@@ -471,6 +471,11 @@
               <FileType>1</FileType>
               <FilePath>..\USER\sinCos.c</FilePath>
             </File>
+            <File>
+              <FileName>input.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\input.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
