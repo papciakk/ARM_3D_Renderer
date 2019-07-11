@@ -16,22 +16,22 @@
 #define PORT_JOY GPIOD
 
 #define IS_BTN_USER_PRESSED() \
-	(GPIO_ReadInputData(PORT_BTN_USER) & PIN_BTN_USER)
+	!(GPIO_ReadInputData(PORT_BTN_USER) & PIN_BTN_USER)
 	
 #define IS_JOY_UP() \
-	(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_UP)
+	!(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_UP)
 	
 #define IS_JOY_DOWN() \
-	(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_DOWN)
+	!(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_DOWN)
 	
 #define IS_JOY_LEFT() \
-	(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_LEFT)
+	!(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_LEFT)
 	
 #define IS_JOY_RIGHT() \
-	(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_RIGHT)
+	!(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_RIGHT)
 
 #define IS_JOY_SEL() \
-	(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_SEL)
+	!(GPIO_ReadInputData(PORT_JOY) & PIN_JOY_SEL)
 	
 
 void initInputs(void);

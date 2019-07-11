@@ -2,10 +2,14 @@
 #include "lighting.h"
 #include "mesh.h"
 #include "transformations.h"
+#include <stdio.h>
+#include <limits.h>
 
 extern const uint16_t TILES_CNT;
 extern rect_t tileRects[];
 extern uint16_t frameBuffer[];
+
+extern int16_t depthBuffer[];
 
 const uint16_t HALF_FULLSCREEN_RES_X = FULLSCREEN_RES_X / 2;
 const uint16_t HALF_FULLSCREEN_RES_Y = FULLSCREEN_RES_Y / 2;
@@ -26,7 +30,7 @@ void initMeshRenderer(void) {
 
 __inline void rescaleAttributes(vertex_attr_t *rescaled_va, vertex_attr_32_t *va) {	
 	rescaled_va->pos.x = (va->pos.x >> 7) + HALF_FULLSCREEN_RES_X;
-	rescaled_va->pos.y = va->pos.y >> 7;
+	rescaled_va->pos.y = va->pos.y;
 	rescaled_va->pos.z = (va->pos.z >> 7) + HALF_FULLSCREEN_RES_Y;
 	
 	rescaled_va->normal.x = va->normal.x;
@@ -79,6 +83,10 @@ void renderMesh(void)
 	int32_t area;
 	point3d_t depths;
 	
+	uint16_t x, y;
+	
+	int32_t min = INT_MAX, max = INT_MIN;
+	
 	for(tileId = 0; tileId < TILES_CNT; tileId++) {
 		currentRect = &tileRects[tileId];
 		
@@ -96,14 +104,30 @@ void renderMesh(void)
 			calcLightingForTriangle(&v1, &v2, &v3, &color1, &color2, &color3);
 			
 			depths.x = v1.pos.y; depths.y = v2.pos.y; depths.z = v3.pos.y;
+			
 			area = getTriangleArea(&v1, &v2, &v3);
 			
 			renderTriangle(
 				frameBuffer, &triangle, currentRect,
 				&color1, &color2, &color3,
-				area, &depths
+				area, &depths, &min, &max
 			);
+			
 		}
+		
+		/*for(y = 0; y < TILE_RES_Y; y++) {
+			for(x = 0; x < TILE_RES_X; x++) {
+				if(depthBuffer[TILE_RES_X * y + x] > max) {
+					max = depthBuffer[TILE_RES_X * y + x];
+				}
+				
+				if(depthBuffer[TILE_RES_X * y + x] < min) {
+					min = depthBuffer[TILE_RES_X * y + x];
+				}
+			}
+		}
+		
+		printf("min: %i, max: %i\n", min, max);*/
 		
 		displayFrameBuffer(currentRect);
 	}

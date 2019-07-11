@@ -26,8 +26,34 @@ void initInputs(void) {
 
 void handleInputs(void) {
 	if(IS_BTN_USER_PRESSED()) {
-		scale -= 1;
+		scale--;
 	} else if(IS_JOY_SEL()) {
-		scale += 1;
+		scale++;
+	} else if(IS_JOY_LEFT()) {
+		rotZ += 10;
+	} else if(IS_JOY_RIGHT()) {
+		rotZ -= 10;
+	} else if(IS_JOY_UP()) {
+		rotY += 10;
+	} else if(IS_JOY_DOWN()) {
+		rotY -= 10;
+	} 
+	
+	if(rotX < 0) {
+		rotX = 359;
+	} else if(rotX > 360) {
+		rotX = 1;
+	}
+	
+	if(rotY < 0) {
+		rotY = 359;
+	} else if(rotY > 360) {
+		rotY = 1;
+	}
+	
+	if(rotZ == 0) {
+		rotZ = 359;
+	} else if(rotZ > 360) {
+		rotZ = 1;
 	}
 }

@@ -1,7 +1,8 @@
 #include "display.h"
+#include <limits.h>
 
 uint16_t frameBuffer[TILE_RES_X * TILE_RES_Y];
-uint16_t depthBuffer[TILE_RES_X * TILE_RES_Y];
+int16_t depthBuffer[TILE_RES_X * TILE_RES_Y];
 
 void initDisplay(void) {
 	delay_init();
@@ -14,7 +15,10 @@ void clearFrameBuffer(void) {
 }
 
 void clearDepthBuffer(void) {
-	memset(depthBuffer, 0, sizeof(uint16_t) * TILE_RES_X * TILE_RES_Y);
+	uint32_t i;
+	for(i = 0; i < TILE_RES_X * TILE_RES_Y; i++) {
+		depthBuffer[i] = SHRT_MAX;
+	}
 }
 
 void displayFrameBuffer(rect_t *tileRect) {
