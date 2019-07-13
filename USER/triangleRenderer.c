@@ -45,8 +45,7 @@ __inline srect_t *getCurrentRenderingBoundingBox(triangle2d_t *triangle, rect_t 
 
 void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileRect,
 	color_t *color1, color_t *color2, color_t *color3,
-	int32_t area, point3d_t *depths,
-	int32_t *min, int32_t *max) {
+	int32_t area, point3d_t *depths) {
 		
 	int32_t e0, e1, e2;
 	srect_t *renderRect;
@@ -67,22 +66,19 @@ void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileR
 				r = INTERPOLATE_COLOR_COMPONENT(color3->r,color1->r,color2->r,e0,e1,e2,area);
 				g = INTERPOLATE_COLOR_COMPONENT(color3->g,color1->g,color2->g,e0,e1,e2,area);
 				b = INTERPOLATE_COLOR_COMPONENT(color3->b,color1->b,color2->b,e0,e1,e2,area);
+	
+				bufferAddr = TILE_RES_X * (y - tileRect->y0) + (x - tileRect->x0);				
+				
+#ifdef Z_BUFFERING
 				depth = INTERPOLATE_DEPTH(depths, e0, e1, e2, area);
 	
-				bufferAddr = TILE_RES_X * (y - tileRect->y0) + (x - tileRect->x0);
-				
-				/*if(depthBuffer[bufferAddr] < *min) {
-					*min = depth;
-				}
-				
-				if(depthBuffer[bufferAddr] > *max) {
-					*max = depth;
-				}*/
-				
 				if(depth < depthBuffer[bufferAddr]) {
 					depthBuffer[bufferAddr] = depth;
 					frameBuffer[bufferAddr] = RGB565(r,g,b);
 				}
+#else
+				frameBuffer[bufferAddr] = RGB565(r,g,b);
+#endif // Z_BUFFERING
 			}
 		}
 	}	

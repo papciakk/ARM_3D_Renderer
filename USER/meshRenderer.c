@@ -22,7 +22,7 @@ __inline void prepareTriangleVertices(uint16_t triangleId, vertex_attr_t *v1, ve
 __inline void projectToScreenSpace(
 	vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3,
 	triangle2d_t *triangle);
-__inline int32_t getTriangleArea(vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3);
+__inline int32_t getTriangleArea(triangle2d_t *triangle);
 
 void initMeshRenderer(void) {
 	initTileSystem();
@@ -65,9 +65,27 @@ __inline void projectToScreenSpace(
 	triangle->a[2].y = v3->pos.y;
 }
 
-__inline int32_t getTriangleArea(vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3) {
-	return (v1->pos.x - v2->pos.x) * (v3->pos.y - v2->pos.y) - 
-		     (v1->pos.y - v2->pos.y) * (v3->pos.x - v2->pos.x);
+__inline int32_t getTriangleArea(triangle2d_t *triangle) {
+	return (triangle->a[0].x - triangle->a[1].x) * (triangle->a[2].y - triangle->a[1].y) - 
+		     (triangle->a[0].y - triangle->a[1].y) * (triangle->a[2].x - triangle->a[1].x);
+}
+
+void calcLightingAndRenderTriangle(
+	vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3,
+	triangle2d_t *triangle, rect_t *currentRect, int32_t area) {
+		
+	color_t color1, color2, color3;
+	point3d_t depths;
+	
+	calcLightingForTriangle(v1, v2, v3, &color1, &color2, &color3);
+	
+	depths.x = -v1->pos.z; depths.y = -v2->pos.z; depths.z = -v3->pos.z;
+	
+	renderTriangle(
+		frameBuffer, triangle, currentRect,
+		&color1, &color2, &color3,
+		area, &depths
+	);
 }
 
 void renderMesh(void)
@@ -75,17 +93,11 @@ void renderMesh(void)
 	uint16_t tileId, triangleId;
 	rect_t *currentRect;
 	
-	triangle2d_t triangle;
 	vertex_attr_t v1_raw, v2_raw, v3_raw;
 	vertex_attr_32_t v1_t, v2_t, v3_t;
 	vertex_attr_t v1, v2, v3;
-	color_t color1, color2, color3;
+	triangle2d_t triangle;
 	int32_t area;
-	point3d_t depths;
-	
-	uint16_t x, y;
-	
-	int32_t min = INT_MAX, max = INT_MIN;
 	
 	for(tileId = 0; tileId < TILES_CNT; tileId++) {
 		currentRect = &tileRects[tileId];
@@ -101,35 +113,17 @@ void renderMesh(void)
 			rescaleAllAttributes(&v1_t, &v2_t, &v3_t, &v1, &v2, &v3);
 			projectToScreenSpace(&v1, &v2, &v3, &triangle);
 			
-			area = getTriangleArea(&v1, &v2, &v3);
+			area = getTriangleArea(&triangle);
 			
-			if(area > 0) {			
-				calcLightingForTriangle(&v1, &v2, &v3, &color1, &color2, &color3);
-				
-				depths.x = -v1.pos.z; depths.y = -v2.pos.z; depths.z = -v3.pos.z;
-				
-				renderTriangle(
-					frameBuffer, &triangle, currentRect,
-					&color1, &color2, &color3,
-					area, &depths, &min, &max
-				);
+#ifdef BACKFACE_CULLING
+			if(area > 0) {	
+				calcLightingAndRenderTriangle(&v1, &v2, &v3, &triangle, currentRect, area);
 			}
+#else
+			calcLightingAndRenderTriangle(&v1, &v2, &v3, &triangle, currentRect, area);
+#endif // BACKFACE_CULLING
 			
 		}
-		
-		/*for(y = 0; y < TILE_RES_Y; y++) {
-			for(x = 0; x < TILE_RES_X; x++) {
-				if(depthBuffer[TILE_RES_X * y + x] > max) {
-					max = depthBuffer[TILE_RES_X * y + x];
-				}
-				
-				if(depthBuffer[TILE_RES_X * y + x] < min) {
-					min = depthBuffer[TILE_RES_X * y + x];
-				}
-			}
-		}
-		
-		printf("min: %i, max: %i\n", min, max);*/
 		
 		displayFrameBuffer(currentRect);
 	}
