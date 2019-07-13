@@ -30,13 +30,13 @@ void handleInputs(void) {
 	} else if(IS_JOY_SEL()) {
 		scale++;
 	} else if(IS_JOY_LEFT()) {
-		rotZ += 10;
-	} else if(IS_JOY_RIGHT()) {
-		rotZ -= 10;
-	} else if(IS_JOY_UP()) {
 		rotY += 10;
-	} else if(IS_JOY_DOWN()) {
+	} else if(IS_JOY_RIGHT()) {
 		rotY -= 10;
+	} else if(IS_JOY_UP()) {
+		rotX += 10;
+	} else if(IS_JOY_DOWN()) {
+		rotX -= 10;
 	} 
 	
 	if(rotX < 0) {

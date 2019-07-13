@@ -1,7 +1,7 @@
 #include "transformations.h"
 #include "sinCos.h"
 
-int16_t rotX = 0, rotY = 0, rotZ = 0;
+int16_t rotX = 0, rotY = 0, rotZ = 180;
 int16_t scale = 1;
 
 __inline point3d_32_t transformScale(point3d_32_t pIn, int16_t scale);
@@ -19,6 +19,7 @@ __inline point3d_32_t transformScale(point3d_32_t pIn, int16_t scale) {
 
 __inline point3d_32_t transformRotation(point3d_t pIn, int16_t rotX, int16_t rotY, int16_t rotZ) {
 	point3d_32_t p;
+	int32_t tmp;
 	
 	int16_t sinX, cosX;
 	int16_t sinY, cosY;
@@ -28,21 +29,23 @@ __inline point3d_32_t transformRotation(point3d_t pIn, int16_t rotX, int16_t rot
 	
 	getSinCos(rotX, &sinX, &cosX);
 	getSinCos(rotY, &sinY, &cosY);
-	getSinCos(rotZ, &sinZ, &cosZ);
-	
-	// x rot
-	p.y = (p.y * cosX - p.z * sinX) >> 13;
-	p.z = (p.y * sinX + p.z * cosX) >> 13;
-	
-	// y rot
-	p.x = (p.z * sinY + p.x * cosY) >> 13;
-	p.z = (p.z * cosY - p.x * sinY) >> 13;
+	getSinCos(rotZ, &sinZ, &cosZ);	
 	
 	// z rot
-	p.x = (p.x * cosZ - p.y * sinZ) >> 13;
-	p.y = (p.x * sinZ + p.y * cosZ) >> 13;
+	tmp = (int32_t)(p.x * cosZ - p.y * sinZ) >> 13;
+	p.y = (int32_t)(p.x * sinZ + p.y * cosZ) >> 13;
+	p.x = tmp;
 	
-
+	// y rot
+	tmp = (int32_t)(p.z * sinY + p.x * cosY)  >> 13;
+	p.z = (int32_t)(p.z * cosY - p.x * sinY)  >> 13;
+	p.x = tmp;
+	
+	// x rot
+	tmp = (int32_t)(p.y * cosX - p.z * sinX) >> 13;
+	p.z = (int32_t)(p.y * sinX + p.z * cosX) >> 13;
+	p.y = tmp;
+	
 	return p;
 }
 
