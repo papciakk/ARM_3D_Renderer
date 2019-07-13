@@ -351,7 +351,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -377,7 +377,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\CMSIS\CM3\CoreSupport;..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm;..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\Libraries\STM32F10x_StdPeriph_Driver\src;..\USER;..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\USER\SPI_Flash;..\USER\GLCD;..\USER\SysTick</IncludePath>
+              <IncludePath>..\Libraries\CMSIS\CM3\CoreSupport;..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm;..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\Libraries\STM32F10x_StdPeriph_Driver\src;..\USER;..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\USER\SPI_Flash;..\USER\GLCD;..\USER\SysTick;..\USER\3D</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -435,46 +435,6 @@
               <FileName>stm32f10x_conf.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\USER\stm32f10x_conf.h</FilePath>
-            </File>
-            <File>
-              <FileName>triangleRenderer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\triangleRenderer.c</FilePath>
-            </File>
-            <File>
-              <FileName>tileSystem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\tileSystem.c</FilePath>
-            </File>
-            <File>
-              <FileName>display.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\display.c</FilePath>
-            </File>
-            <File>
-              <FileName>meshRenderer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\meshRenderer.c</FilePath>
-            </File>
-            <File>
-              <FileName>lighting.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\lighting.c</FilePath>
-            </File>
-            <File>
-              <FileName>transformations.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\transformations.c</FilePath>
-            </File>
-            <File>
-              <FileName>sinCos.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\sinCos.c</FilePath>
-            </File>
-            <File>
-              <FileName>input.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\input.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -655,6 +615,51 @@
               <FileName>startup_stm32f10x_hd.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_hd.s</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>3D</GroupName>
+          <Files>
+            <File>
+              <FileName>display.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\3D\display.c</FilePath>
+            </File>
+            <File>
+              <FileName>input.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\3D\input.c</FilePath>
+            </File>
+            <File>
+              <FileName>lighting.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\3D\lighting.c</FilePath>
+            </File>
+            <File>
+              <FileName>meshRenderer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\3D\meshRenderer.c</FilePath>
+            </File>
+            <File>
+              <FileName>sinCos.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\3D\sinCos.c</FilePath>
+            </File>
+            <File>
+              <FileName>tileSystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\3D\tileSystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>transformations.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\3D\transformations.c</FilePath>
+            </File>
+            <File>
+              <FileName>triangleRenderer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\3D\triangleRenderer.c</FilePath>
             </File>
           </Files>
         </Group>
