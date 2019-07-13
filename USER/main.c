@@ -44,32 +44,23 @@ void USART_Configuration(void);
 	
 int main(void)
 {		
-//	int i, j;
-	double t;
+	uint32_t renderCycleCount;
+	
+	USART_Configuration();
 	
 	initInputs();
-	USART_Configuration();
+	initCycleCounter();
 	initDisplay();
 	initMeshRenderer();
-	initCycleCounter();
 	
   while (1)
   {
 		updateInputs();
 		handleInputs();
 		
-		/*for(j = 0; j < 4; j++) {
-			for(i = 0; i < 4; i++) {
-				printf("%i ", keyboard[j * 4 + i]);
-			}
-			printf("\n");
-		}
-		printf("\n");*/
+		renderCycleCount = renderMesh();
 		
-		resetCycleCounter();
-		renderMesh();
-		t = (double)getCycleCount() / SystemCoreClock;
-		printf("%f\n", t);
+		printf("%f\n", (float)renderCycleCount / SystemCoreClock);
   }
 }
 

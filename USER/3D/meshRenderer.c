@@ -2,6 +2,7 @@
 #include "lighting.h"
 #include "mesh.h"
 #include "transformations.h"
+#include "measureTime.h"
 #include <stdio.h>
 #include <limits.h>
 
@@ -23,6 +24,7 @@ __inline void projectToScreenSpace(
 	vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3,
 	triangle2d_t *triangle);
 __inline int32_t getTriangleArea(triangle2d_t *triangle);
+void renderTile(rect_t *currentRect);
 
 void initMeshRenderer(void) {
 	initTileSystem();
@@ -87,44 +89,54 @@ void calcLightingAndRenderTriangle(
 		area, &depths
 	);
 }
-
-void renderMesh(void)
-{
-	uint16_t tileId, triangleId;
-	rect_t *currentRect;
 	
+void renderTile(rect_t *currentRect) {		
+	uint16_t triangleId;
 	vertex_attr_t v1_raw, v2_raw, v3_raw;
 	vertex_attr_32_t v1_t, v2_t, v3_t;
 	vertex_attr_t v1, v2, v3;
 	triangle2d_t triangle;
 	int32_t area;
 	
+	clearFrameBuffer();
+	clearDepthBuffer();
+		
+	for(triangleId = 0; triangleId < num_indices; triangleId++) {
+		prepareTriangleVertices(triangleId, &v1_raw, &v2_raw, &v3_raw);
+		transform(&v1_raw, &v1_t);
+		transform(&v2_raw, &v2_t);
+		transform(&v3_raw, &v3_t);
+		rescaleAllAttributes(&v1_t, &v2_t, &v3_t, &v1, &v2, &v3);
+		projectToScreenSpace(&v1, &v2, &v3, &triangle);
+			
+		area = getTriangleArea(&triangle);
+			
+#ifdef BACKFACE_CULLING
+		if(area > 0) {	
+			calcLightingAndRenderTriangle(&v1, &v2, &v3, &triangle, currentRect, area);
+		}
+#else
+		calcLightingAndRenderTriangle(&v1, &v2, &v3, &triangle, currentRect, area);
+#endif // BACKFACE_CULLING
+			
+	}
+}
+
+uint32_t renderMesh(void)
+{
+	uint16_t tileId;
+	rect_t *currentRect;
+	uint32_t cycleCount = 0;
+	
 	for(tileId = 0; tileId < TILES_CNT; tileId++) {
 		currentRect = &tileRects[tileId];
 		
-		clearFrameBuffer();
-		clearDepthBuffer();
-		
-		for(triangleId = 0; triangleId < num_indices; triangleId++) {
-			prepareTriangleVertices(triangleId, &v1_raw, &v2_raw, &v3_raw);
-			transform(&v1_raw, &v1_t);
-			transform(&v2_raw, &v2_t);
-			transform(&v3_raw, &v3_t);
-			rescaleAllAttributes(&v1_t, &v2_t, &v3_t, &v1, &v2, &v3);
-			projectToScreenSpace(&v1, &v2, &v3, &triangle);
-			
-			area = getTriangleArea(&triangle);
-			
-#ifdef BACKFACE_CULLING
-			if(area > 0) {	
-				calcLightingAndRenderTriangle(&v1, &v2, &v3, &triangle, currentRect, area);
-			}
-#else
-			calcLightingAndRenderTriangle(&v1, &v2, &v3, &triangle, currentRect, area);
-#endif // BACKFACE_CULLING
-			
-		}
+		resetCycleCounter();
+		renderTile(currentRect);
+		cycleCount += getCycleCount();
 		
 		displayFrameBuffer(currentRect);
 	}
+	
+	return cycleCount;
 }

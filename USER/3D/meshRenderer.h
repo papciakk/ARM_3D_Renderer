@@ -3,5 +3,5 @@
 #include "tileSystem.h"
 #include "triangleRenderer.h"
 
-void renderMesh(void);
+uint32_t renderMesh(void);
 void initMeshRenderer(void);
