@@ -436,6 +436,11 @@
               <FileType>5</FileType>
               <FilePath>..\USER\stm32f10x_conf.h</FilePath>
             </File>
+            <File>
+              <FileName>measureTime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\measureTime.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

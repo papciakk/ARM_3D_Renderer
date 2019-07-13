@@ -27,6 +27,7 @@
 #include "display.h"
 #include "sinCos.h"
 #include "input.h"
+#include "measureTime.h"
 #include <stdio.h>
 
 #ifdef __GNUC__
@@ -37,19 +38,38 @@
   #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
 
+extern uint8_t keyboard[16];
+	
 void USART_Configuration(void);
 	
 int main(void)
 {		
+//	int i, j;
+	double t;
+	
 	initInputs();
 	USART_Configuration();
 	initDisplay();
 	initMeshRenderer();
+	initCycleCounter();
 	
   while (1)
   {
-		handleInputs();		
+		updateInputs();
+		handleInputs();
+		
+		/*for(j = 0; j < 4; j++) {
+			for(i = 0; i < 4; i++) {
+				printf("%i ", keyboard[j * 4 + i]);
+			}
+			printf("\n");
+		}
+		printf("\n");*/
+		
+		resetCycleCounter();
 		renderMesh();
+		t = (double)getCycleCount() / SystemCoreClock;
+		printf("%f\n", t);
   }
 }
 
