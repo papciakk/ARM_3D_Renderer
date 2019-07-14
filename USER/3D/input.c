@@ -5,7 +5,7 @@
 #include "display.h"
 
 extern int16_t rotX, rotY, rotZ;
-extern int16_t lightRotX, lightRotY, lightRotZ;
+extern int16_t lightRotX, lightRotY;
 extern int16_t scale;
 
 uint8_t keyboard[16];
@@ -34,7 +34,7 @@ void updateInputs(void) {
 	RESET_KBD_V1();
 	if(IS_KBD_H0_ACTIVE()) keyboard[KBD_ROT_Z_MINUS] = 1;
 	if(IS_KBD_H1_ACTIVE()) keyboard[KBD_ROT_Y_MINUS] = 1;
-	if(IS_KBD_H2_ACTIVE()) keyboard[KBD_LIGHT_ROT_Z_MINUS] = 1;
+	if(IS_KBD_H2_ACTIVE()) keyboard[8] = 1;
 	if(IS_KBD_H3_ACTIVE()) keyboard[KBD_LIGHT_ROT_Y_MINUS] = 1;
 	
 	delay_ms(1);
@@ -52,7 +52,7 @@ void updateInputs(void) {
 	RESET_KBD_V3();
 	if(IS_KBD_H0_ACTIVE()) keyboard[KBD_ROT_Z_PLUS] = 1;
 	if(IS_KBD_H1_ACTIVE()) keyboard[KBD_ROT_Y_PLUS] = 1;
-	if(IS_KBD_H2_ACTIVE()) keyboard[KBD_LIGHT_ROT_Z_PLUS] = 1;
+	if(IS_KBD_H2_ACTIVE()) keyboard[10] = 1;
 	if(IS_KBD_H3_ACTIVE()) keyboard[KBD_LIGHT_ROT_Y_PLUS] = 1;
 	
 	delay_ms(1);
@@ -77,29 +77,22 @@ void handleInputs(void) {
 	} else if(keyboard[KBD_ROT_X_PLUS]) {
 		rotX += ROT_STEP;
 	} else if(keyboard[KBD_ROT_Y_MINUS]) {
-		rotY -= ROT_STEP;
-	} else if(keyboard[KBD_ROT_Y_PLUS]) {
 		rotY += ROT_STEP;
+	} else if(keyboard[KBD_ROT_Y_PLUS]) {
+		rotY -= ROT_STEP;
 	} else if(keyboard[KBD_ROT_Z_MINUS]) {
-		rotZ -= ROT_STEP;
-	} else if(keyboard[KBD_ROT_Z_PLUS]) {
 		rotZ += ROT_STEP;
+	} else if(keyboard[KBD_ROT_Z_PLUS]) {
+		rotZ -= ROT_STEP;
 	} else if(keyboard[KBD_LIGHT_ROT_X_MINUS]) {
 		lightRotX -= ROT_STEP;
 	} else if(keyboard[KBD_LIGHT_ROT_X_PLUS]) {
 		lightRotX += ROT_STEP;
 	} else if(keyboard[KBD_LIGHT_ROT_Y_MINUS]) {
-		lightRotY -= ROT_STEP;
-	} else if(keyboard[KBD_LIGHT_ROT_Y_PLUS]) {
 		lightRotY += ROT_STEP;
-	} else if(keyboard[KBD_LIGHT_ROT_Z_MINUS]) {
-		lightRotZ -= ROT_STEP;
-	} else if(keyboard[KBD_LIGHT_ROT_Z_PLUS]) {
-		lightRotZ += ROT_STEP;
-	}
-
-	lightRotY += ROT_STEP;
-	//delay_ms(500);
+	} else if(keyboard[KBD_LIGHT_ROT_Y_PLUS]) {
+		lightRotY -= ROT_STEP;
+	} 
 	
 	applyConstraints();
 }
@@ -133,11 +126,5 @@ void applyConstraints(void) {
 		lightRotY = 359;
 	} else if(lightRotY > 360) {
 		lightRotY = 1;
-	}
-	
-	if(lightRotZ < 0) {
-		lightRotZ = 359;
-	} else if(lightRotZ > 360) {
-		lightRotZ = 1;
 	}
 }

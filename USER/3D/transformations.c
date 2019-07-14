@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 int16_t rotX = 0, rotY = 0, rotZ = 180;
-int16_t lightRotX = 0, lightRotY = 0, lightRotZ = 0;
+int16_t lightRotX = 0, lightRotY = 0;
 int16_t scale = 1;
 
 extern point3d_t lightDir;
@@ -68,7 +68,7 @@ void transform(vertex_attr_t *vaIn, vertex_attr_32_t *vaOut) {
 }
 
 void transformLight(void) {
-	point3d_32_t p = transformRotation(lightDir, lightRotX, lightRotY, lightRotZ);
+	point3d_32_t p = transformRotation(lightDir, lightRotX, lightRotY, 0);
 	lightDir.x = p.x; lightDir.y = p.y; lightDir.z = p.z;
 	//printf("%i %i %i\n", lightDir.x, lightDir.y, lightDir.z);
 }
