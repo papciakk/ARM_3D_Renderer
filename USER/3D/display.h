@@ -2,7 +2,6 @@
 #define DISPLAY_H
 
 #include "definitions.h"
-#include <string.h>
 #include "GLCD.h"
 #include "systick.h"
 

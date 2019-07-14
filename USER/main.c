@@ -48,7 +48,7 @@ int main(void) {
 	initCycleCounter();
 	initDisplay();
 	initMeshRenderer();
-	initLighting();
+	resetLightPosition();
 	
   while (1)
   {
@@ -57,7 +57,7 @@ int main(void) {
 		
 		renderCycleCount = renderMesh();
 		
-		printf("%f\n", (float)renderCycleCount / SystemCoreClock);
+		//printf("%f\n", (float)renderCycleCount / SystemCoreClock);
   }
 }
 

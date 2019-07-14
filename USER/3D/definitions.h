@@ -61,12 +61,12 @@ typedef struct {
 
 typedef struct {
 	point3d_t pos;
-	upoint3d_t normal;
+	point3d_t normal;
 } vertex_attr_t;
 
 typedef struct {
 	point3d_32_t pos;
-	upoint3d_t normal;
+	point3d_t normal;
 } vertex_attr_32_t;
 
 typedef struct {
@@ -88,5 +88,8 @@ typedef struct {
 }
 
 #define RGB565(r,g,b) (uint16_t)(((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3))
+
+#define EDGE_FUNCTION(a,b,c) \
+	(c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x)
 
 #endif // DEFINITIONS_H

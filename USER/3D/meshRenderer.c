@@ -73,7 +73,7 @@ __inline int32_t getTriangleArea(triangle2d_t *triangle) {
 }
 
 void calcLightingAndRenderTriangle(
-	vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3,
+	vertex_attr_32_t *v1, vertex_attr_32_t *v2, vertex_attr_32_t *v3,
 	triangle2d_t *triangle, rect_t *currentRect, int32_t area) {
 		
 	color_t color1, color2, color3;
@@ -81,7 +81,7 @@ void calcLightingAndRenderTriangle(
 	
 	calcLightingForTriangle(v1, v2, v3, &color1, &color2, &color3);
 	
-	depths.x = -v1->pos.z; depths.y = -v2->pos.z; depths.z = -v3->pos.z;
+	depths.x = v1->pos.z; depths.y = v2->pos.z; depths.z = v3->pos.z;
 	
 	renderTriangle(
 		frameBuffer, triangle, currentRect,
@@ -109,11 +109,12 @@ void renderTile(rect_t *currentRect) {
 		rescaleAllAttributes(&v1_t, &v2_t, &v3_t, &v1, &v2, &v3);
 		projectToScreenSpace(&v1, &v2, &v3, &triangle);
 			
-		area = getTriangleArea(&triangle);
+		//area = getTriangleArea(&triangle);
+		area = EDGE_FUNCTION(v1.pos,v2.pos,v3.pos);
 			
 #ifdef BACKFACE_CULLING
 		if(area > 0) {	
-			calcLightingAndRenderTriangle(&v1, &v2, &v3, &triangle, currentRect, area);
+			calcLightingAndRenderTriangle(&v1_t, &v2_t, &v3_t, &triangle, currentRect, area);
 		}
 #else
 		calcLightingAndRenderTriangle(&v1, &v2, &v3, &triangle, currentRect, area);
@@ -127,6 +128,9 @@ uint32_t renderMesh(void)
 	uint16_t tileId;
 	rect_t *currentRect;
 	uint32_t cycleCount = 0;
+	
+	resetLightPosition();
+	transformLight();
 	
 	for(tileId = 0; tileId < TILES_CNT; tileId++) {
 		currentRect = &tileRects[tileId];

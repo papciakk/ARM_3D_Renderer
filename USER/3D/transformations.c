@@ -1,8 +1,12 @@
 #include "transformations.h"
 #include "sinCos.h"
+#include <stdio.h>
 
 int16_t rotX = 0, rotY = 0, rotZ = 180;
+int16_t lightRotX = 0, lightRotY = 0, lightRotZ = 0;
 int16_t scale = 1;
+
+extern point3d_t lightDir;
 
 __inline point3d_32_t transformScale(point3d_32_t pIn, int16_t scale);
 __inline point3d_32_t transformRotation(point3d_t pIn, int16_t rotX, int16_t rotY, int16_t rotZ);
@@ -61,4 +65,10 @@ void transform(vertex_attr_t *vaIn, vertex_attr_32_t *vaOut) {
 	vaOut->normal.x = vaIn->normal.x; 
 	vaOut->normal.y = vaIn->normal.y; 
 	vaOut->normal.z = vaIn->normal.z;
+}
+
+void transformLight(void) {
+	point3d_32_t p = transformRotation(lightDir, lightRotX, lightRotY, lightRotZ);
+	lightDir.x = p.x; lightDir.y = p.y; lightDir.z = p.z;
+	//printf("%i %i %i\n", lightDir.x, lightDir.y, lightDir.z);
 }

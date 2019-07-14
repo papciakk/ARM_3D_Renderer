@@ -10,6 +10,8 @@ extern int16_t depthBuffer[];
 	(int32_t)((e0) * (c0) + (e1) * (c1) + (e2) * (c2)) / (area)
 #define INTERPOLATE_DEPTH(depths,e0,e1,e2,area) \
 	(int32_t)((e0) * (depths)->z + (e1) * (depths)->x + (e2) * (depths)->y) / (area)
+	
+
 
 __inline srect_t *getTriangleBoundingBox(triangle2d_t *triangle);
 __inline srect_t *getTriangleAndTileIntersectedBoundingBox(srect_t *triangleBB, rect_t *tileBB);
@@ -53,24 +55,34 @@ void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileR
 	uint16_t bufferAddr;
 	uint8_t r, g, b;
 	int32_t depth;
+		
+	point2d_t p;
 	
 	renderRect = getCurrentRenderingBoundingBox(triangle, tileRect);
 	
 	for(y = renderRect->y0; y < renderRect->y1; y++) {
 		for(x = renderRect->x0; x < renderRect->x1; x++) {
-			e0 = CROSS_PRODUCT(x,y,triangle->a[0],triangle->a[1]);
+			/*e0 = CROSS_PRODUCT(x,y,triangle->a[0],triangle->a[1]);
 			e1 = CROSS_PRODUCT(x,y,triangle->a[1],triangle->a[2]);
-			e2 = CROSS_PRODUCT(x,y,triangle->a[2],triangle->a[0]);
+			e2 = CROSS_PRODUCT(x,y,triangle->a[2],triangle->a[0]);*/
 			
-			if(e0 <= 0 && e1 <= 0 && e2 <= 0) {
-				r = INTERPOLATE_COLOR_COMPONENT(color3->r,color1->r,color2->r,e0,e1,e2,area);
-				g = INTERPOLATE_COLOR_COMPONENT(color3->g,color1->g,color2->g,e0,e1,e2,area);
-				b = INTERPOLATE_COLOR_COMPONENT(color3->b,color1->b,color2->b,e0,e1,e2,area);
-	
+			p.x = x;
+			p.y = y;
+			
+			e0 = EDGE_FUNCTION(triangle->a[1],triangle->a[2],p);
+			e1 = EDGE_FUNCTION(triangle->a[2],triangle->a[0],p);
+			e2 = EDGE_FUNCTION(triangle->a[0],triangle->a[1],p);
+			
+			if(e0 >= 0 && e1 >= 0 && e2 >= 0) {
+				
+				r = (e0 * color1->r + e1 * color2->r + e2 * color3->r) / area;
+				g = (e0 * color1->g + e1 * color2->g + e2 * color3->g) / area;
+				b = (e0 * color1->b + e1 * color2->b + e2 * color3->b) / area;
+				
 				bufferAddr = TILE_RES_Y * (x - tileRect->x0) + (y - tileRect->y0);				
 				
 #ifdef Z_BUFFERING
-				depth = INTERPOLATE_DEPTH(depths, e0, e1, e2, area);
+				depth = (e0 * depths->x + e1 * depths->y + e2 * depths->z) / area;
 	
 				if(depth < depthBuffer[bufferAddr]) {
 					depthBuffer[bufferAddr] = depth;
