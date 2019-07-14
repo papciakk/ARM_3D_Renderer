@@ -67,7 +67,7 @@ void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileR
 				g = INTERPOLATE_COLOR_COMPONENT(color3->g,color1->g,color2->g,e0,e1,e2,area);
 				b = INTERPOLATE_COLOR_COMPONENT(color3->b,color1->b,color2->b,e0,e1,e2,area);
 	
-				bufferAddr = TILE_RES_X * (y - tileRect->y0) + (x - tileRect->x0);				
+				bufferAddr = TILE_RES_Y * (x - tileRect->x0) + (y - tileRect->y0);				
 				
 #ifdef Z_BUFFERING
 				depth = INTERPOLATE_DEPTH(depths, e0, e1, e2, area);

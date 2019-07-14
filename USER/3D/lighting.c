@@ -1,8 +1,14 @@
 #include "lighting.h"
 
-const point3d_32_t lightDir = {180, 0, 180};
+point3d_32_t lightDir;
 
 __inline void calcLightingForVertex(vertex_attr_t *v, color_t *color);
+
+void initLighting(void) {
+	lightDir.x = 180;
+	lightDir.y = 0;
+	lightDir.z = 180;
+}
 
 void calcLightingForTriangle(
 	vertex_attr_t *v1, vertex_attr_t *v2, vertex_attr_t *v3, 
@@ -19,7 +25,7 @@ __inline void calcLightingForVertex(vertex_attr_t *v, color_t *color) {
 		v->normal.x * lightDir.x +
 		v->normal.y * lightDir.y +
 		v->normal.z * lightDir.z
-	) >> 8;
+	) >> 16;
 	
 	if(diffuse_raw > 0) {
 		if(diffuse_raw > 255) {

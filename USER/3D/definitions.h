@@ -32,6 +32,10 @@ typedef struct {
 } point3d_t;
 
 typedef struct {
+	uint16_t x, y, z;
+} upoint3d_t;
+
+typedef struct {
 	int32_t x, y, z;
 } point3d_32_t;
 
@@ -57,12 +61,12 @@ typedef struct {
 
 typedef struct {
 	point3d_t pos;
-	point3d_t normal;
+	upoint3d_t normal;
 } vertex_attr_t;
 
 typedef struct {
 	point3d_32_t pos;
-	point3d_t normal;
+	upoint3d_t normal;
 } vertex_attr_32_t;
 
 typedef struct {

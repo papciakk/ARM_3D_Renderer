@@ -22,28 +22,24 @@
 
 /* Includes ------------------------------------------------------------------*/
 
+#include <stdio.h>
 #include "stm32f10x.h"
 #include "meshRenderer.h"
+#include "lighting.h"
 #include "display.h"
 #include "sinCos.h"
 #include "input.h"
 #include "measureTime.h"
-#include <stdio.h>
 
 #ifdef __GNUC__
-  /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
-     set to 'Yes') calls __io_putchar() */
   #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 #else
   #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
-
-extern uint8_t keyboard[16];
 	
 void USART_Configuration(void);
 	
-int main(void)
-{		
+int main(void) {		
 	uint32_t renderCycleCount;
 	
 	USART_Configuration();
@@ -52,6 +48,7 @@ int main(void)
 	initCycleCounter();
 	initDisplay();
 	initMeshRenderer();
+	initLighting();
 	
   while (1)
   {
@@ -64,15 +61,12 @@ int main(void)
   }
 }
 
-void USART_Configuration(void)
-{ 
+void USART_Configuration(void) { 
   GPIO_InitTypeDef GPIO_InitStructure;
   USART_InitTypeDef USART_InitStructure; 
 
-  RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_USART1,ENABLE);
-  /*
-  *  USART1_TX -> PA9 , USART1_RX ->	PA10
-  */				
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_USART1, ENABLE);
+  
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;	         
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; 
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
@@ -98,13 +92,8 @@ void USART_Configuration(void)
 
 PUTCHAR_PROTOTYPE
 {
-  /* Place your implementation of fputc here */
-  /* e.g. write a character to the USART */
   USART_SendData(USART1, (uint8_t) ch);
-
-  /* Loop until the end of transmission */
-  while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET)
-  {}
+  while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET) {}
 
   return ch;
 }
@@ -118,14 +107,12 @@ PUTCHAR_PROTOTYPE
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t* file, uint32_t line)
-{ 
+void assert_failed(uint8_t* file, uint32_t line) { 
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
   /* Infinite loop */
-  while (1)
-  {
+  while (1) {
   }
 }
 #endif

@@ -23,6 +23,7 @@
 #include "GLCD.h" 
 #include "HzLib.h"
 #include "AsciiLib.h"
+#include <stdio.h>
 
 /* Private variables ---------------------------------------------------------*/
 static uint8_t LCD_Code;
@@ -33,7 +34,7 @@ static uint8_t LCD_Code;
 #define  ILI9328    2  /* 0x9328 */
 #define  ILI9331    3  /* 0x9331 */
 #define  SSD1298    4  /* 0x8999 */
-#define  SSD1289    5  /* 0x8989 */
+#define  SSD1289    5  /* 0x8989 */ // my!
 #define  ST7781     6  /* 0x7783 */
 #define  LGDP4531   7  /* 0x4531 */
 #define  SPFD5408B  8  /* 0x5408 */
@@ -1389,7 +1390,45 @@ void GUI_Chinese(uint16_t Xpos, uint16_t Ypos, uint8_t *str,uint16_t Color, uint
     while(*str!=0);
 }  
 
+// extension based on: https://github.com/LonelyWolf/stm32/blob/master/SSD1289/ssd1289.c
+
+void LCD_SetWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
+	uint16_t xw = x + w - 1;
+	uint16_t yh = y + h - 1;
+	LCD_WriteReg(0x0045, x);  // Top RAM address pos
+	LCD_WriteReg(0x0046, xw); // Bottom RAM address pos
+	LCD_WriteReg(0x0044, (yh << 8) + (y & 0x00ff)); // Left and Right RAM address pos
+	LCD_SetCursor(x, y);
+}
+
+void LCD_FillImage(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *image) {
+	uint32_t i = 0;
+	LCD_SetWindow(x, y, w, h);
+	
+	Clr_Cs;
+	LCD_WriteIndex(0x0022); 
+	
+	for (i = 0; i < w * h; i++) {
+		LCD_WriteData(image[i]);
+	}
+	Set_Cs; 
+}
+
+/*void LCD_FillImage(uint16_t X, uint16_t Y, uint16_t W, uint16_t H, uint16_t* pBMP) {
+	uint16_t i,j;
+	uint16_t *buffer = (uint16_t *)malloc(sizeof(uint16_t) * W);
+
+	LCD_SetWindow(X,Y,W,H);
+	Clr_Cs;
+	LCD_WriteIndex(0x0022);
+	for (i = 0; i < H; i++) {
+		memcpy(buffer,&pBMP[i*W],W*2);
+		for (j = 0; j < W; j++) LCD_WriteData(buffer[j]);
+	}
+	Set_Cs;
+	free(buffer);
+}*/
+
 /*********************************************************************************************************
       END FILE
 *********************************************************************************************************/
-

@@ -104,6 +104,10 @@ void PutChar( uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, ui
 void GUI_Text(uint16_t Xpos, uint16_t Ypos, uint8_t *str,uint16_t Color, uint16_t bkColor);
 void PutChinese(uint16_t Xpos,uint16_t Ypos,uint8_t *str,uint16_t Color,uint16_t bkColor);
 void GUI_Chinese(uint16_t Xpos, uint16_t Ypos, uint8_t *str,uint16_t Color, uint16_t bkColor);
+
+void LCD_SetWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
+void LCD_FillImage(uint16_t X, uint16_t Y, uint16_t W, uint16_t H, uint16_t* pBMP);
+
 #endif 
 /*********************************************************************************************************
       END FILE
