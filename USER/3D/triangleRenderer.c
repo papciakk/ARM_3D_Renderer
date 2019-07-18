@@ -4,15 +4,6 @@
 
 extern int16_t depthBuffer[];
 
-#define CROSS_PRODUCT(x,y,p2,p3) \
-	(((x) - (p3).x) * ((p2).y - (p3).y) - ((p2).x - (p3).x) * ((y) - (p3).y))
-#define INTERPOLATE_COLOR_COMPONENT(c0,c1,c2,e0,e1,e2,area) \
-	(int32_t)((e0) * (c0) + (e1) * (c1) + (e2) * (c2)) / (area)
-#define INTERPOLATE_DEPTH(depths,e0,e1,e2,area) \
-	(int32_t)((e0) * (depths)->z + (e1) * (depths)->x + (e2) * (depths)->y) / (area)
-	
-
-
 __inline srect_t *getTriangleBoundingBox(triangle2d_t *triangle);
 __inline srect_t *getTriangleAndTileIntersectedBoundingBox(srect_t *triangleBB, rect_t *tileBB);
 __inline srect_t *getCurrentRenderingBoundingBox(triangle2d_t *triangle, rect_t *tileRect);
@@ -47,14 +38,14 @@ __inline srect_t *getCurrentRenderingBoundingBox(triangle2d_t *triangle, rect_t 
 
 void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileRect,
 	color_t *color1, color_t *color2, color_t *color3,
-	int32_t area, point3d_t *depths) {
+	int16_t area, point3d_t *depths) {
 		
-	int32_t e0, e1, e2;
+	int16_t e0, e1, e2;
 	srect_t *renderRect;
 	int16_t x, y;
 	uint16_t bufferAddr;
 	uint8_t r, g, b;
-	int32_t depth;
+	int16_t depth;
 		
 	point2d_t p;
 	
@@ -62,10 +53,6 @@ void renderTriangle(uint16_t *frameBuffer, triangle2d_t *triangle, rect_t *tileR
 	
 	for(y = renderRect->y0; y < renderRect->y1; y++) {
 		for(x = renderRect->x0; x < renderRect->x1; x++) {
-			/*e0 = CROSS_PRODUCT(x,y,triangle->a[0],triangle->a[1]);
-			e1 = CROSS_PRODUCT(x,y,triangle->a[1],triangle->a[2]);
-			e2 = CROSS_PRODUCT(x,y,triangle->a[2],triangle->a[0]);*/
-			
 			p.x = x;
 			p.y = y;
 			

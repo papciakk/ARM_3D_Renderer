@@ -96,7 +96,7 @@ void renderTile(rect_t *currentRect) {
 	vertex_attr_32_t v1_t, v2_t, v3_t;
 	vertex_attr_t v1, v2, v3;
 	triangle2d_t triangle;
-	int32_t area;
+	int16_t area;
 	
 	clearFrameBuffer();
 	clearDepthBuffer();
@@ -109,7 +109,6 @@ void renderTile(rect_t *currentRect) {
 		rescaleAllAttributes(&v1_t, &v2_t, &v3_t, &v1, &v2, &v3);
 		projectToScreenSpace(&v1, &v2, &v3, &triangle);
 			
-		//area = getTriangleArea(&triangle);
 		area = EDGE_FUNCTION(v1.pos,v2.pos,v3.pos);
 			
 #ifdef BACKFACE_CULLING

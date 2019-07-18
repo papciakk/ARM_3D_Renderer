@@ -57,7 +57,7 @@ int main(void) {
 		
 		renderCycleCount = renderMesh();
 		
-		//printf("%f\n", (float)renderCycleCount / SystemCoreClock);
+		printf("%f\n", (float)renderCycleCount / SystemCoreClock);
   }
 }
 

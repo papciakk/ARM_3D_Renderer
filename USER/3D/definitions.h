@@ -32,10 +32,6 @@ typedef struct {
 } point3d_t;
 
 typedef struct {
-	uint16_t x, y, z;
-} upoint3d_t;
-
-typedef struct {
 	int32_t x, y, z;
 } point3d_32_t;
 
@@ -44,20 +40,8 @@ typedef struct {
 } triangle2d_t;
 
 typedef struct {
-	point2d_32_t a[3];
-} triangle2d_32_t;
-
-typedef struct {
 	point3d_t a[3];
 } triangle3d_t;
-
-typedef struct {
-	point3d_32_t a[3];
-} triangle3d_32_t;
-
-typedef struct {
-	color_t a[3];
-} triangle_colors_t;
 
 typedef struct {
 	point3d_t pos;
@@ -73,10 +57,6 @@ typedef struct {
 	uint16_t a, b, c;
 } triangle_index_t;
 
-typedef struct {
-	vertex_attr_t a[3];
-} triangle_t;
-
 #define VA(px,py,pz,nx,ny,nz) {{(px), (py), (pz)}, {(nx), (ny), (nz)}}
 #define IDX(a,b,c) {(a), (b), (c)}
 
@@ -87,9 +67,10 @@ typedef struct {
 	.y1 = FULLSCREEN_RES_Y - 1 \
 }
 
-#define RGB565(r,g,b) (uint16_t)(((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3))
+#define RGB565(r,g,b) \
+	(uint16_t)((((r) >> 3) << 11) | (((g) >> 2) << 5) | ((b) >> 3))
 
 #define EDGE_FUNCTION(a,b,c) \
-	(c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x)
+	((c).x - (a).x) * ((b).y - (a).y) - ((c).y - (a).y) * ((b).x - (a).x)
 
 #endif // DEFINITIONS_H
