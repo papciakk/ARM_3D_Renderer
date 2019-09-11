@@ -4,7 +4,7 @@
 
 int16_t rotX = 0, rotY = 0, rotZ = 180;
 int16_t lightRotX = 0, lightRotY = 0;
-int16_t scale = 1;
+int16_t scale = 256;
 
 extern point3d_t lightDir;
 
@@ -14,9 +14,9 @@ __inline point3d_32_t transformRotation(point3d_t pIn, int16_t rotX, int16_t rot
 __inline point3d_32_t transformScale(point3d_32_t pIn, int16_t scale) {
 	point3d_32_t pOut;
 	
-	pOut.x = pIn.x + ((pIn.x * scale) >> 3);
-	pOut.y = pIn.y + ((pIn.y * scale) >> 3);
-	pOut.z = pIn.z + ((pIn.z * scale) >> 3);
+	pOut.x = pIn.x * scale / 256;
+	pOut.y = pIn.y * scale / 256;
+	pOut.z = pIn.z;
 	
 	return pOut;
 }
