@@ -40,7 +40,7 @@
 void USART_Configuration(void);
 	
 int main(void) {		
-	uint32_t renderCycleCount;
+	uint32_t cycleCount;
 	
 	USART_Configuration();
 	
@@ -52,12 +52,16 @@ int main(void) {
 	
   while (1)
   {
+		resetCycleCounter();
+		
 		updateInputs();
 		handleInputs();
 		
-		renderCycleCount = renderMesh();
+		renderMesh();
 		
-		printf("%f\n", (float)renderCycleCount / SystemCoreClock);
+		cycleCount = getCycleCount();
+		
+		printf("%f\n", (float)cycleCount / SystemCoreClock);
   }
 }
 

@@ -122,24 +122,18 @@ void renderTile(rect_t *currentRect) {
 	}
 }
 
-uint32_t renderMesh(void)
+void renderMesh(void)
 {
 	uint16_t tileId;
 	rect_t *currentRect;
-	uint32_t cycleCount = 0;
 	
 	resetLightPosition();
 	transformLight();
 	
 	for(tileId = 0; tileId < TILES_CNT; tileId++) {
 		currentRect = &tileRects[tileId];
-		
-		resetCycleCounter();
 		renderTile(currentRect);
-		cycleCount += getCycleCount();
-		
 		displayFrameBuffer(currentRect);
 	}
 	
-	return cycleCount;
 }
