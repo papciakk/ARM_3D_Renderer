@@ -37,6 +37,10 @@
   #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
 	
+extern int16_t rotX, rotY, rotZ;
+extern int16_t lightRotX, lightRotY;
+extern int16_t scale;
+	
 void USART_Configuration(void);
 	
 int main(void) {		
@@ -62,6 +66,8 @@ int main(void) {
 		cycleCount = getCycleCount();
 		
 		printf("%f\n", (float)cycleCount / SystemCoreClock);
+		
+		
   }
 }
 

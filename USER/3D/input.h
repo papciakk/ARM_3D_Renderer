@@ -62,5 +62,6 @@
 void initInputs(void);
 void updateInputs(void);
 void handleInputs(void);
+void applyConstraints(void);
 
 #endif // INPUT_H

@@ -127,12 +127,9 @@ void renderMesh(void)
 	uint16_t tileId;
 	rect_t *currentRect;
 	
-	resetLightPosition();
-	transformLight();
-	
 	for(tileId = 0; tileId < TILES_CNT; tileId++) {
 		currentRect = &tileRects[tileId];
-		renderTile(currentRect);
+		//renderTile(currentRect);
 		displayFrameBuffer(currentRect);
 	}
 	
